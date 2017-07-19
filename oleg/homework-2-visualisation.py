@@ -88,4 +88,12 @@ sns.countplot(x='dayofweek', data = df_march_2015, hue='domain')
 sns.countplot(x = 'hour', hue = 'dayofweek', data = df[df.dayofweek.isin([1, 6])])
 
 
+df['year_month'] = [d.replace(day=1, hour=0, minute=0, second=0) for d in df.published]
 
+# using unstack
+df.groupby(['year_month', 'domain']).size().unstack().plot(title='number of articles')
+df.groupby(['year_month', 'domain'])['votes_plus', 'votes_minus'].mean().unstack().plot(title='votes')
+
+# using pivot table (slower)
+df.pivot_table(index='year_month', columns='domain', values=['votes_plus', 'votes_minus'], aggfunc='mean', fill_value=0).plot(title='votes')
+df.pivot_table(index='year_month', columns='domain', aggfunc='size', fill_value=0).plot(title='number of articles')
